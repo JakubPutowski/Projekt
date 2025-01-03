@@ -1,5 +1,9 @@
-﻿using System.Security.Cryptography;
+﻿using System.Net;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Serialization;
 
@@ -18,7 +22,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public IActionResult Login(string email, string password)
+    public async Task<IActionResult> Login(string email, string password)
     {
         var HashedPassword = HashPassword(password);
         var user = _users.FirstOrDefault(u => u.Email == email && u.PasswordHash == HashedPassword);
@@ -27,8 +31,20 @@ public class AccountController : Controller
             ModelState.AddModelError("", "Invalid email or password");
             return View();
         }
-        HttpContext.Session.SetString("UserEmail", user.Email);
-        HttpContext.Session.SetString("UserRole", user.Role);
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+        var claimsIdentity = new ClaimsIdentity(claims, "Cookies");
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true,
+        };
+
+        await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(claimsIdentity), authProperties);
+        
 
         return RedirectToAction("Profile");
     }
@@ -36,7 +52,7 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Profile()
     {
-        var email = HttpContext.Session.GetString("UserEmail");
+        var email = HttpContext.User.Identity.Name;
         if (email == null)
         {
             return RedirectToAction("Login");
@@ -51,9 +67,9 @@ public class AccountController : Controller
         return View(user);
     }
     [HttpGet]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
-        HttpContext.Session.Clear();
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login");
     }
     private static string HashPassword(string password)

@@ -1,0 +1,58 @@
+﻿@model WebApp.Services.PaginatedList<WebApp.Models.University.University.UniversityDto>
+
+<h1>List of Universities</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Univeristy Name</th>
+        <th>Country Name</th>
+        <th>Ranking Type 1</th>
+        <th>Ranking Type 2</th>
+        <th>Ranking Type 3</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var university in Model)
+    {
+        <tr>
+            <td>@university.UniversityName</td>
+            <td>@university.CountryName</td>
+            <td><a href="@university.RankingType1">Link</a></td>
+            <td><a href="@university.RankingType2">Link</a></td>
+            <td><a href="@university.RankingType3">Link</a></td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-route-pageIndex="1" asp-route-pageSize="@Model.PageSize">First</a>
+        </li>
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-pageSize="@Model.PageSize">Previous</a>
+        </li>
+        @if (Model.PageIndex > 6)
+        {
+        <li class="page-item disabled"><span class="page-link">...</span></li>
+        }
+        @for (int i = Math.Max(1, Model.PageIndex - 5); i <= Math.Min(Model.TotalPages, Model.PageIndex + 5); i++)
+        {
+        <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+            <a class="page-link" asp-action="Index" asp-route-pageIndex="@i" asp-route-pageSize="@Model.PageSize">@i</a>
+        </li>
+        }
+        @if (Model.PageIndex + 5 < Model.TotalPages)
+        {
+        <li class="page-item disabled"><span class="page-link">...</span></li>
+        }
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-pageSize="@Model.PageSize">Next</a>
+        </li>
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a class="page-link" asp-action="Index" asp-route-pageIndex="@Model.TotalPages" asp-route-pageSize="@Model.PageSize">Last</a>
+        </li>
+    </ul>
+
+</nav>
