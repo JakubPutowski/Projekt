@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Models.Movies;
+using WebApp.Models.University;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,17 @@ builder.Services.AddDbContext<MoviesDbContext>(op =>
 {
     op.UseSqlite(builder.Configuration["MoviesDatabase:ConnectionString"]);
 });
+builder.Services.AddDbContext<UniversityDbContext>(op =>
+{
+    op.UseSqlite(builder.Configuration["UniversityDatabase:ConnectionString"]);
+});
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+    });
 
 var app = builder.Build();
 
@@ -25,6 +38,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
