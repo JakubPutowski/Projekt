@@ -1,11 +1,8 @@
-﻿@model IEnumerable<WebApp.Models.ViewModels.RankingDetailsViewModel>
-@{
-var universityName = ViewBag.UniversityName as string;
-var rankingSystemName = ViewBag.RankingSystemName as string;
-}
+﻿@model PaginatedList<WebApp.Models.ViewModels.RankingDetailsViewModel>
 
-<h1>Ranking Details for @universityName</h1>
-<h2>@rankingSystemName</h2>
+<h1>Ranking Details for @ViewBag.UniversityName</h1>
+<h2>@ViewBag.RankingSystemName</h2>
+
 <table class="table">
     <thead>
     <tr>
@@ -25,3 +22,62 @@ var rankingSystemName = ViewBag.RankingSystemName as string;
     }
     </tbody>
 </table>
+
+<div class="pagination">
+    @if (Model.HasPreviousPage)
+    {
+    <a asp-action="Details" asp-route-universityId="@ViewBag.UniversityId" asp-route-rankingSystemId="@ViewBag.RankingSystemId" asp-route-pageIndex="1" class="page-link">1</a>
+    <a asp-action="Details" asp-route-universityId="@ViewBag.UniversityId" asp-route-rankingSystemId="@ViewBag.RankingSystemId" asp-route-pageIndex="@(Model.PageIndex - 1)" class="page-link">Previous</a>
+    }
+
+    @if (Model.PageIndex > 6)
+    {
+    <span class="page-link">...</span>
+    }
+
+    @for (int i = Math.Max(1, Model.PageIndex - 5); i <= Math.Min(Model.TotalPages, Model.PageIndex + 5); i++)
+    {
+    if (i == Model.PageIndex)
+    {
+    <span class="page-link active">@i</span>
+    }
+    else
+    {
+    <a asp-action="Details" asp-route-universityId="@ViewBag.UniversityId" asp-route-rankingSystemId="@ViewBag.RankingSystemId" asp-route-pageIndex="@i" class="page-link">@i</a>
+    }
+    }
+
+    @if (Model.PageIndex + 5 < Model.TotalPages)
+    {
+    <span class="page-link">...</span>
+    }
+
+    @if (Model.HasNextPage)
+    {
+    <a asp-action="Details" asp-route-universityId="@ViewBag.UniversityId" asp-route-rankingSystemId="@ViewBag.RankingSystemId" asp-route-pageIndex="@(Model.PageIndex + 1)" class="page-link">Next</a>
+    <a asp-action="Details" asp-route-universityId="@ViewBag.UniversityId" asp-route-rankingSystemId="@ViewBag.RankingSystemId" asp-route-pageIndex="@(Model.TotalPages)" class="page-link">@Model.TotalPages</a>
+    }
+</div>
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .page-link {
+        display: inline-block;
+        padding: 10px 15px;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        color: #007bff;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    .page-link.active {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+</style>
