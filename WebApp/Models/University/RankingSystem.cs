@@ -9,5 +9,5 @@ public partial class RankingSystem
 
     public string? SystemName { get; set; }
 
-    public virtual ICollection<RankingCriterion> RankingCriteria { get; set; } = new List<RankingCriterion>();
+    public ICollection<RankingCriterion> RankingCriteria { get; set; }
 }

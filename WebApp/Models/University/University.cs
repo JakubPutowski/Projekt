@@ -12,4 +12,5 @@ public partial class University
     public string? UniversityName { get; set; }
 
     public virtual Country? Country { get; set; }
+    
 }

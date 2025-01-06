@@ -1,0 +1,33 @@
+﻿@using WebApp.Models.University
+@model IEnumerable<WebApp.Models.ViewModels.UniversityViewModel>
+@{
+    var rankingSystems = ViewBag.RankingSystems as List<RankingSystem>;
+}
+
+<h1>List of Universities</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th>University Name</th>
+        <th>Country</th>
+        <th>Rankings</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var university in Model)
+    {
+        <tr>
+            <td>@university.UniversityName</td>
+            <td>@university.CountryName</td>
+            <td>
+                @foreach (var ranking in rankingSystems)
+                {
+                    <a asp-controller="Ranking" asp-action="Details" asp-route-universityId="@university.UniversityId" asp-route-rankingSystemId="@ranking.Id">
+                        @ranking.SystemName
+                    </a><br />
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

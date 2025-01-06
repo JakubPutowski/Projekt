@@ -1,0 +1,27 @@
+﻿@model IEnumerable<WebApp.Models.ViewModels.RankingDetailsViewModel>
+@{
+var universityName = ViewBag.UniversityName as string;
+var rankingSystemName = ViewBag.RankingSystemName as string;
+}
+
+<h1>Ranking Details for @universityName</h1>
+<h2>@rankingSystemName</h2>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Year</th>
+        <th>Criteria</th>
+        <th>Score</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var detail in Model)
+    {
+    <tr>
+        <td>@detail.Year</td>
+        <td>@detail.CriteriaName</td>
+        <td>@detail.Score</td>
+    </tr>
+    }
+    </tbody>
+</table>
