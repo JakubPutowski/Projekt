@@ -15,24 +15,21 @@ public class UniversityController : Controller
     {
         _context = context;
     }
-    public IActionResult Index()
+    public async Task<IActionResult> Index(int pageIndex = 1, int pageSize = 20)
     {
-        // Pobieramy dane uniwersytetów i krajów
-        var universities = _context.Universities
+        var source = _context.Universities
             .Include(u => u.Country)
             .Select(u => new UniversityViewModel
             {
                 UniversityId = u.Id,
                 UniversityName = u.UniversityName,
                 CountryName = u.Country.CountryName
-            })
-            .ToList();
+            });
 
-        // Pobieramy systemy rankingowe
+        var paginatedList = await PaginatedList<UniversityViewModel>.CreateAsync(source, pageIndex, pageSize);
+
         ViewBag.RankingSystems = _context.RankingSystems.ToList();
 
-        return View(universities);
+        return View(paginatedList);
     }
-    
-    
 }

@@ -1,7 +1,9 @@
 ﻿@using WebApp.Models.University
-@model IEnumerable<WebApp.Models.ViewModels.UniversityViewModel>
+@model PaginatedList<WebApp.Models.ViewModels.UniversityViewModel>
 @{
     var rankingSystems = ViewBag.RankingSystems as List<RankingSystem>;
+    int startPage = Math.Max(1, Model.PageIndex - 5);
+    int endPage = Math.Min(Model.TotalPages, Model.PageIndex + 5);
 }
 
 <h1>List of Universities</h1>
@@ -16,18 +18,78 @@
     <tbody>
     @foreach (var university in Model)
     {
-        <tr>
-            <td>@university.UniversityName</td>
-            <td>@university.CountryName</td>
-            <td>
-                @foreach (var ranking in rankingSystems)
-                {
-                    <a asp-controller="Ranking" asp-action="Details" asp-route-universityId="@university.UniversityId" asp-route-rankingSystemId="@ranking.Id">
-                        @ranking.SystemName
-                    </a><br />
-                }
-            </td>
-        </tr>
+    <tr>
+        <td>@university.UniversityName</td>
+        <td>@university.CountryName</td>
+        <td>
+            @foreach (var ranking in ViewBag.RankingSystems)
+            {
+            <a asp-controller="Ranking" asp-action="Details" asp-route-universityId="@university.UniversityId" asp-route-rankingSystemId="@ranking.Id">
+                @ranking.SystemName
+            </a><br />
+            }
+        </td>
+    </tr>
     }
     </tbody>
 </table>
+
+<div class="pagination">
+    @if (Model.HasPreviousPage)
+    {
+    <a asp-action="Index" asp-route-pageIndex="1" class="page-link">1</a>
+    <a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" class="page-link">Previous</a>
+    }
+
+    @if (startPage > 1)
+    {
+    <span class="page-link">...</span>
+    }
+
+    @for (int i = startPage; i <= endPage; i++)
+    {
+    if (i == Model.PageIndex)
+    {
+    <span class="page-link active">@i</span>
+    }
+    else
+    {
+    <a asp-action="Index" asp-route-pageIndex="@i" class="page-link">@i</a>
+    }
+    }
+
+    @if (endPage < Model.TotalPages)
+    {
+    <span class="page-link">...</span>
+    }
+
+    @if (Model.HasNextPage)
+    {
+    <a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex + 1)" class="page-link">Next</a>
+    <a asp-action="Index" asp-route-pageIndex="@(Model.TotalPages)" class="page-link">@Model.TotalPages</a>
+    }
+</div>
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .page-link {
+        display: inline-block;
+        padding: 10px 15px;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        color: #007bff;
+        text-decoration: none;
+        border-radius: 4px;
+    }
+    .page-link.active {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+    
+</style>
