@@ -6,7 +6,8 @@ ViewData["Title"] = "Add University Ranking";
 <h2>Add University Ranking</h2>
 
 <form asp-action="Create" method="post">
-    <input type="hidden" asp-for="UniversityId" value="@ViewBag.UniversityId" />
+    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+    <input type="hidden" asp-for="UniversityId" value="@ViewBag.UniversityId"/>
 
     <div class="form-group">
         <label asp-for="RankingId">Ranking System</label>
@@ -14,7 +15,7 @@ ViewData["Title"] = "Add University Ranking";
             <option value="">-- Select a Ranking System --</option>
             @foreach (var system in ViewBag.RankingSystems as List<WebApp.Models.University.RankingSystem>)
             {
-            <option value="@system.Id">@system.SystemName</option>
+                <option value="@system.Id">@system.SystemName</option>
             }
         </select>
         <span asp-validation-for="RankingId" class="text-danger"></span>
@@ -30,13 +31,13 @@ ViewData["Title"] = "Add University Ranking";
 
     <div class="form-group">
         <label asp-for="Year"></label>
-        <input asp-for="Year" class="form-control" />
+        <input asp-for="Year" class="form-control"/>
         <span asp-validation-for="Year" class="text-danger"></span>
     </div>
 
     <div class="form-group">
         <label asp-for="Score"></label>
-        <input asp-for="Score" class="form-control" />
+        <input asp-for="Score" class="form-control"/>
         <span asp-validation-for="Score" class="text-danger"></span>
     </div>
 

@@ -5,7 +5,6 @@ using WebApp.Models.University;
 using WebApp.Models.ViewModels;
 
 namespace WebApp.Controllers;
-[Authorize]
 public class UniversityController : Controller
 {
     private readonly UniversityDbContext _context;

@@ -4,7 +4,6 @@ using WebApp.Models.University;
 using WebApp.Models.ViewModels;
 
 namespace WebApp.Controllers;
-[Authorize]
 public class RankingController : Controller
 {
     private readonly UniversityDbContext _context;
@@ -39,17 +38,20 @@ public class RankingController : Controller
 
         return View(paginatedList);
     }
+    [Authorize]
     [HttpGet]
-    public IActionResult Create(int universityId)
+    public IActionResult Create(int universityId, string returnUrl = null)
     {
         // Pobierz listę systemów rankingowych
         var rankingSystems = _context.RankingSystems.ToList();
 
         ViewBag.UniversityId = universityId;
         ViewBag.RankingSystems = rankingSystems;
+        ViewBag.ReturnUrl = returnUrl ?? Url.Action("Create", new { universityId });
 
         return View();
     }
+    [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Create(UniversityRankingViewModel model)

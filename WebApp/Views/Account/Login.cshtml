@@ -1,16 +1,30 @@
 ﻿@using (Html.BeginForm("Login", "Account", FormMethod.Post))
 {
 <div>
-    <label for="email">Email</label>
-    <input type="email" name="email" id="email" required />
+    <h1>Przykładowe dane do zalogowania</h1>
+    <table style="border-spacing: 0; border-collapse: collapse;">
+        <tr>
+            <td style="padding-right: 5px; border-right: 1px solid #ccc;">adam@wsei.edu.pl</td>
+            <td style="padding-left: 1px;">1234!</td>
+        </tr>
+        <tr>
+            <td style="padding-right: 5px; border-right: 1px solid #ccc;">jakub@wsei.edu.pl</td>
+            <td style="padding-left: 1px;">1234@@</td>
+        </tr>
+    </table>
 </div>
-<div>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required />
-</div>
-<button type="submit">Log In</button>
-@if (ViewBag.Error != null)
-{
-<p style="color:red;">@ViewBag.Error</p>
-}
+    <div>
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required />
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required />
+    </div>
+    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+    <button type="submit">Log In</button>
+    @if (ViewBag.Error != null)
+    {
+        <p style="color:red;">@ViewBag.Error</p>
+    }
 }

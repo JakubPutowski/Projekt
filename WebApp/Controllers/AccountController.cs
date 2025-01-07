@@ -15,19 +15,20 @@ public class AccountController : Controller
     private static readonly List<AppUser> users = new List<AppUser>
     {
         new AppUser { Email = "adam@wsei.edu.pl", PasswordHash = HashPassword("1234!"), Role = "admin" },
-        new AppUser { Email = "natalia@gmail.com", PasswordHash = HashPassword("1234@"), Role = "user" }
+        new AppUser { Email = "jakub@wsei.edu.pl", PasswordHash = HashPassword("1234@"), Role = "user" }
     };
 
     // Strona logowania
     [HttpGet]
-    public IActionResult Login()
+    public IActionResult Login(string returnUrl = null)
     {
+        ViewBag.ReturnUrl = returnUrl;
         return View();
     }
 
     // Obsługa logowania
     [HttpPost]
-    public async Task<IActionResult> Login(string email, string password)
+    public async Task<IActionResult> Login(string email, string password, string returnUrl = null)
     {
         // Znajdź użytkownika w liście
         var hashedPassword = HashPassword(password);
@@ -48,11 +49,18 @@ public class AccountController : Controller
             // Logowanie użytkownika
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
+            // Przekierowanie na returnUrl, jeśli istnieje, lub na stronę domyślną
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
         // Jeśli logowanie nieudane
         ViewBag.Error = "Invalid email or password";
+        ViewBag.ReturnUrl = returnUrl;
         return View();
     }
     [Authorize]
