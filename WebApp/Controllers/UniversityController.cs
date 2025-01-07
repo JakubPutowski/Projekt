@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Elfie.Serialization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebApp.Models;
 using WebApp.Models.University;
 using WebApp.Models.ViewModels;
 
 namespace WebApp.Controllers;
-
+[Authorize]
 public class UniversityController : Controller
 {
     private readonly UniversityDbContext _context;

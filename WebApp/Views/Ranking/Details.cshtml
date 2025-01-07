@@ -20,6 +20,10 @@
         <td>@detail.Score</td>
     </tr>
     }
+    <div>
+        <a asp-action="Create" asp-controller="Ranking" asp-route-universityId="@ViewBag.UniversityId">Add Ranking</a> |
+        <a asp-action="">Back to List</a>
+    </div>
     </tbody>
 </table>
 
