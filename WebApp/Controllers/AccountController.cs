@@ -17,26 +17,21 @@ public class AccountController : Controller
         new AppUser { Email = "adam@wsei.edu.pl", PasswordHash = HashPassword("1234!"), Role = "admin" },
         new AppUser { Email = "jakub@wsei.edu.pl", PasswordHash = HashPassword("1234@"), Role = "user" }
     };
-
-    // Strona logowania
     [HttpGet]
     public IActionResult Login(string returnUrl = null)
     {
         ViewBag.ReturnUrl = returnUrl;
         return View();
     }
-
-    // Obsługa logowania
+    
     [HttpPost]
     public async Task<IActionResult> Login(string email, string password, string returnUrl = null)
     {
-        // Znajdź użytkownika w liście
         var hashedPassword = HashPassword(password);
         var user = users.FirstOrDefault(u => u.Email == email && u.PasswordHash == hashedPassword);
 
         if (user != null)
         {
-            // Tworzenie tożsamości użytkownika
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Email),
@@ -46,10 +41,8 @@ public class AccountController : Controller
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            // Logowanie użytkownika
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-            // Przekierowanie na returnUrl, jeśli istnieje, lub na stronę domyślną
+            
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
@@ -57,33 +50,16 @@ public class AccountController : Controller
 
             return RedirectToAction("Index", "Home");
         }
-
-        // Jeśli logowanie nieudane
         ViewBag.Error = "Invalid email or password";
         ViewBag.ReturnUrl = returnUrl;
         return View();
     }
     [Authorize]
-    public IActionResult Profile()
-    {
-        var user = User;
-        var profile = new ProfileViewModel
-        {
-            Email = user.Identity.Name,
-            Role = User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value
-        };
-
-        return View(profile);
-    }
-
-    // Wylogowanie użytkownika
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Login");
     }
-
-    // Obsługa dostępu zabronionego
     public IActionResult AccessDenied()
     {
         return View();

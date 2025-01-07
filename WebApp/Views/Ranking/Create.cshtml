@@ -41,12 +41,11 @@ ViewData["Title"] = "Add University Ranking";
         <span asp-validation-for="Score" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Add Ranking</button>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Add Ranking</button>
+        <a href="@ViewBag.ReturnUrl" class="btn btn-secondary ml-2">Back to Details</a>
+    </div>
 </form>
-
-<div>
-    <a asp-action="Details" asp-route-universityId="@ViewBag.UniversityId">Back to Details</a>
-</div>
 
 @section Scripts {
 <partial name="_ValidationScriptsPartial" />
@@ -55,11 +54,9 @@ ViewData["Title"] = "Add University Ranking";
         var rankingId = this.value;
         var criteriaSelect = document.getElementById('criteriaSelect');
 
-        // Clear existing options
         criteriaSelect.innerHTML = '<option value="">-- Select a Criterion --</option>';
 
         if (rankingId) {
-            // Fetch criteria for the selected ranking
             fetch(`/Ranking/GetCriteriaByRanking?rankingId=${rankingId}`)
                 .then(response => response.json())
                 .then(data => {

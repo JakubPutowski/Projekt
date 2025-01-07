@@ -1,7 +1,5 @@
-﻿@using WebApp.Models.University
-@model PaginatedList<WebApp.Models.ViewModels.UniversityViewModel>
+﻿@model PaginatedList<WebApp.Models.ViewModels.UniversityViewModel>
 @{
-    var rankingSystems = ViewBag.RankingSystems as List<RankingSystem>;
     int startPage = Math.Max(1, Model.PageIndex - 5);
     int endPage = Math.Min(Model.TotalPages, Model.PageIndex + 5);
 }
@@ -40,12 +38,12 @@
     <a asp-action="Index" asp-route-pageIndex="1" class="page-link">1</a>
     <a asp-action="Index" asp-route-pageIndex="@(Model.PageIndex - 1)" class="page-link">Previous</a>
     }
-
+    
     @if (startPage > 1)
     {
     <span class="page-link">...</span>
     }
-
+    
     @for (int i = startPage; i <= endPage; i++)
     {
     if (i == Model.PageIndex)

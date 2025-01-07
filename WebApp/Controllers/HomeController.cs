@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 
 namespace WebApp.Controllers;
-[Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

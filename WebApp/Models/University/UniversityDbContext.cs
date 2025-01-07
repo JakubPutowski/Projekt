@@ -91,9 +91,8 @@ public partial class UniversityDbContext : DbContext
         modelBuilder.Entity<UniversityRankingYear>(entity =>
         {
             entity
-                .HasKey(e => new { e.UniversityId, e.RankingCriteriaId, e.Year }) // Złożony klucz
-
-                .HasName("PK_UniversityRankingYear"); // Opcjonalnie: nazwa klucza
+                .HasKey(e => new { e.UniversityId, e.RankingCriteriaId, e.Year }) 
+                .HasName("PK_UniversityRankingYear"); 
 
             entity.ToTable("university_ranking_year");
 

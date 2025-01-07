@@ -7,12 +7,10 @@ namespace WebApp.Controllers;
 public class RankingController : Controller
 {
     private readonly UniversityDbContext _context;
-
     public RankingController(UniversityDbContext context)
     {
         _context = context;
     }
-
     public async Task<IActionResult> Details(int universityId, int rankingSystemId, int pageIndex = 1, int pageSize = 20)
     {
         var source = _context.UniversityRankingYears
@@ -21,20 +19,24 @@ public class RankingController : Controller
             .Select(ury => new RankingDetailsViewModel
             {
                 Year = ury.Year ?? 0,
-                CriteriaName = ury.RankingCriteria.CriteriaName ?? "Unknown", // Ustaw "Unknown", jeśli CriteriaName jest null
-                Score = ury.Score ?? 0 // Ustaw 0, jeśli Score jest null
+                CriteriaName = ury.RankingCriteria.CriteriaName ?? "Unknown", 
+                Score = ury.Score ?? 0 
             });
-
         var paginatedList = await PaginatedList<RankingDetailsViewModel>.CreateAsync(source, pageIndex, pageSize);
-
-        // Pobieramy dane uniwersytetu i systemu rankingowego
+    
         var university = _context.Universities.Find(universityId);
         var rankingSystem = _context.RankingSystems.Find(rankingSystemId);
+        
+        if (!paginatedList.Any())
+        {
+            ViewBag.NoDataMessage = "Brak danych do wyświetlenia w bazie dla tego rankingu.";
+        }
+        ViewBag.ReturnUrl = Url.Action("Index", "University");
 
         ViewBag.UniversityId = universityId;
         ViewBag.RankingSystemId = rankingSystemId;
-        ViewBag.UniversityName = university.UniversityName;
-        ViewBag.RankingSystemName = rankingSystem.SystemName;
+        ViewBag.UniversityName = university?.UniversityName;
+        ViewBag.RankingSystemName = rankingSystem?.SystemName;
 
         return View(paginatedList);
     }
@@ -42,19 +44,18 @@ public class RankingController : Controller
     [HttpGet]
     public IActionResult Create(int universityId, string returnUrl = null)
     {
-        // Pobierz listę systemów rankingowych
         var rankingSystems = _context.RankingSystems.ToList();
 
         ViewBag.UniversityId = universityId;
         ViewBag.RankingSystems = rankingSystems;
-        ViewBag.ReturnUrl = returnUrl ?? Url.Action("Create", new { universityId });
-
+        ViewBag.ReturnUrl = returnUrl ?? Url.Action("Details", "Ranking", new { universityId = universityId });
+        
         return View();
     }
     [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create(UniversityRankingViewModel model)
+    public IActionResult Create(UniversityRankingViewModel model, string returnUrl = null)
     {
         if (ModelState.IsValid)
         {
@@ -65,18 +66,15 @@ public class RankingController : Controller
                 Year = model.Year,
                 Score = model.Score
             };
-
-            // Dodaj dane do tabeli
             _context.UniversityRankingYears.Add(rankingYear);
             _context.SaveChanges();
-
-            return RedirectToAction("Details", new { universityId = model.UniversityId, rankingSystemId = model.RankingId });
+            return Redirect(returnUrl ?? Url.Action("Details", "Ranking", new { universityId = model.UniversityId, rankingSystemId = model.RankingId }));
         }
 
-        // Załaduj dane dla nieprawidłowego modelu
         ViewBag.UniversityId = model.UniversityId;
         ViewBag.RankingSystems = _context.RankingSystems.ToList();
         ViewBag.Criteria = _context.RankingCriteria.ToList();
+        ViewBag.ReturnUrl = returnUrl;
 
         return View(model);
     }
@@ -91,7 +89,7 @@ public class RankingController : Controller
                 c.CriteriaName
             })
             .ToList();
-
+        
         return Json(criteria);
     }
 }

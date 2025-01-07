@@ -3,6 +3,12 @@
 <h1>Ranking Details for @ViewBag.UniversityName</h1>
 <h2>@ViewBag.RankingSystemName</h2>
 
+@if (ViewBag.NoDataMessage != null)
+{
+<div class="alert alert-info">@ViewBag.NoDataMessage</div>
+}
+else
+{
 <table class="table">
     <thead>
     <tr>
@@ -20,14 +26,16 @@
         <td>@detail.Score</td>
     </tr>
     }
-    <div>
-        <a asp-action="Create" asp-controller="Ranking" asp-route-universityId="@ViewBag.UniversityId" asp-route-returnUrl="@Url.Action("Create", "Ranking", new { universityId = ViewBag.UniversityId })">
-            Add Ranking
-        </a> |
-        <a asp-action="">Back to List</a>
-    </div>
     </tbody>
 </table>
+}
+
+<div>
+    <a asp-action="Create" asp-controller="Ranking" asp-route-universityId="@ViewBag.UniversityId" asp-route-returnUrl="@Url.Action("Details", "Ranking", new { universityId = ViewBag.UniversityId, rankingSystemId = ViewBag.RankingSystemId })" class="btn btn-primary">
+        Add Ranking
+    </a> |
+    <a href="@ViewBag.ReturnUrl" class="btn btn-secondary">Back to List</a>
+</div>
 
 <div class="pagination">
     @if (Model.HasPreviousPage)
